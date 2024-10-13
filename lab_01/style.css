@@ -1,7 +1,9 @@
 table,
 th,
-td {
+td,
+tr {
   border-collapse: collapse;
+  border: 1px solid black;
 }
 .s {
   width: 100px;
@@ -13,5 +15,4 @@ section {
   padding: 0;
   display: flex;
   flex-direction: row;
-  background-color: yellow;
 }

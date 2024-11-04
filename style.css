@@ -1,0 +1,163 @@
+.header {
+  height: 100px;
+  width: 100%;
+  background-image: url(../img/baner.png);
+  border-radius: 10px;
+  text-align: center;
+  padding-top: 10px;
+  color: aliceblue;
+  text-shadow: 5px 5px grey;
+  margin-top: 50px;
+  border-radius: 10px;
+}
+body {
+  background-image: url(../img/wiosna.png);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  font-family: "Arial";
+}
+.content {
+  text-align: justify;
+  padding: 10px;
+  width: 90%;
+  height: auto;
+  overflow: hidden;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.7);
+}
+h2 {
+  padding-top: 40px;
+}
+h2,
+h3 {
+  text-align: center;
+}
+.image {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  vertical-align: top;
+  float: left;
+  display: inline-block;
+  width: 450px;
+  text-align: center;
+}
+#galeria {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 30px;
+  padding-bottom: 30px;
+}
+#galeria img {
+  width: 450px;
+}
+.image img {
+  border-radius: 5px;
+}
+.tekst {
+  float: left;
+  display: inline-block;
+  width: 55%;
+  height: 330px;
+  margin-left: 10px;
+  padding: 10px;
+}
+.content img {
+  height: 300px;
+}
+.strony {
+  text-align: center;
+  width: 100%;
+  float: right;
+}
+nav {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  border-radius: 10px;
+}
+nav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+nav a:hover {
+  background: #ddd;
+  color: black;
+}
+.main {
+  margin-top: 30px;
+}
+.active {
+  background-color: darkgrey;
+}
+button {
+  background-color: aliceblue;
+  color: black;
+  width: 150px;
+  height: 30px;
+  margin-top: 30px;
+}
+.video {
+  width: 80%;
+  height: 500px;
+  margin-left: 15%;
+}
+#break {
+  height: 15px;
+}
+footer {
+  padding: 10px;
+  width: 90%;
+  height: 40px;
+  overflow: hidden;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.7);
+}
+@media (max-width: 1200px) {
+  .image {
+    width: 370px;
+    height: 280px;
+  }
+  .image img {
+    width: 370px;
+    height: 280px;
+  }
+}
+@media (max-width: 1010px) {
+  .image {
+    width: 300px;
+    height: 250px;
+  }
+  .image img {
+    width: 300px;
+    height: 250px;
+  }
+}
+@media (max-width: 830px) {
+  .content {
+    text-align: center;
+  }
+  .image {
+    padding-left: 10%;
+    width: 80%;
+    height: 300px;
+  }
+  .image img {
+    width: 100%;
+    height: 300px;
+  }
+  .tekst {
+    padding-left: 10%;
+    width: 80%;
+  }
+  .strony {
+    margin-top: 10px;
+  }
+}

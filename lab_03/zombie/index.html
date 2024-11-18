@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Strzelanie do Zombie</title>
+    <style>
+      body {
+        margin: 0;
+        background-image: url(board-bg-3.jpg);
+        overflow: hidden;
+        cursor: none;
+      }
+      canvas {
+        display: block;
+      }
+      #gameOverModal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        background-color: black;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        z-index: 1000;
+        cursor: pointer;
+      }
+      #gameOverModal button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: white;
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameOverModal">
+      <h2>Koniec Gry!</h2>
+      <p>Twój wynik: <span id="finalScore"></span></p>
+      <button id="restartButton">Zagraj ponownie</button>
+    </div>
+    <audio id="sadMusic" loop>
+      <source src="sad-music.mp3" type="audio/mpeg" />
+    </audio>
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = 1450;
+      canvas.height = 900;
+
+      const backgroundImage = new Image();
+      backgroundImage.src = "board-bg.jpg";
+
+      const zombieImg = new Image();
+      zombieImg.src = "walkingdead.png";
+
+      const fullHeartImg = new Image();
+      fullHeartImg.src = "full_heart.png";
+
+      const emptyHeartImg = new Image();
+      emptyHeartImg.src = "empty_heart.png";
+
+      const aimImg = new Image();
+      aimImg.src = "aim.png";
+
+      const sadMusic = document.getElementById("sadMusic");
+
+      const gameOverModal = document.getElementById("gameOverModal");
+      const restartButton = document.getElementById("restartButton");
+      const finalScore = document.getElementById("finalScore");
+
+      let lives = 3;
+      let score = 100;
+      let zombies = [];
+      let gameOver = false;
+      let aimX = 0;
+      let aimY = 0;
+
+      const zombieWidth = 80;
+      const zombieHeight = 100;
+
+      function drawLives() {
+        const heartSize = 80;
+        for (let i = 0; i < 3; i++) {
+          const img = i < lives ? fullHeartImg : emptyHeartImg;
+          ctx.drawImage(
+            img,
+            20 + i * (heartSize + 10),
+            20,
+            heartSize,
+            heartSize
+          );
+        }
+      }
+
+      function drawScore() {
+        ctx.fillStyle = "white";
+        ctx.font = "80px Arial";
+        ctx.fillText(`${score}`, canvas.width - 160, 80);
+      }
+
+      class Zombie {
+        constructor(x, y, speed, scale) {
+          this.x = x;
+          this.y = y;
+          this.speed = speed;
+          this.scale = scale;
+          this.frame = 0;
+          this.frameDelay = 0;
+        }
+
+        draw() {
+          const spriteWidth = 200;
+          const spriteHeight = 330;
+          ctx.drawImage(
+            zombieImg,
+            this.frame * spriteWidth,
+            0,
+            spriteWidth,
+            spriteHeight,
+            this.x,
+            this.y,
+            zombieWidth * this.scale,
+            zombieHeight * this.scale
+          );
+        }
+
+        update() {
+          this.x -= this.speed;
+          this.frameDelay++;
+          if (this.frameDelay >= 5) {
+            this.frame = (this.frame + 1) % 10;
+            this.frameDelay = 0;
+          }
+        }
+      }
+
+      function spawnZombie() {
+        const y = (Math.random() / 5) * (canvas.height * 0.5) + 600;
+        const speed = Math.random() * 3 + 1;
+        const scale = Math.random() * 0.6 + 0.5;
+        zombies.push(new Zombie(canvas.width, y, speed, scale));
+      }
+
+      function handleClick(e) {
+        if (gameOver) return;
+
+        const mouseX = aimX;
+        const mouseY = aimY;
+        let hit = false;
+
+        zombies.forEach((zombie, index) => {
+          const zombieX = zombie.x;
+          const zombieY = zombie.y;
+          const zombieW = zombieWidth * zombie.scale;
+          const zombieH = zombieHeight * zombie.scale;
+
+          if (
+            mouseX > zombieX &&
+            mouseX < zombieX + zombieW &&
+            mouseY > zombieY &&
+            mouseY < zombieY + zombieH
+          ) {
+            zombies.splice(index, 1);
+            score += 20;
+            hit = true;
+          }
+        });
+
+        if (!hit) {
+          score -= 10;
+          if (score <= 0) {
+            score = 0;
+            gameOver = true;
+            showGameOverScreen();
+          }
+        }
+      }
+
+      function handleMouseMove(e) {
+        aimX = e.clientX;
+        aimY = e.clientY;
+      }
+
+      function addEventListeners() {
+        canvas.addEventListener("click", handleClick);
+        canvas.addEventListener("mousemove", handleMouseMove);
+      }
+
+      function removeEventListeners() {
+        canvas.removeEventListener("click", handleClick);
+        canvas.removeEventListener("mousemove", handleMouseMove);
+      }
+
+      function restartGame() {
+        sadMusic.pause();
+        sadMusic.currentTime = 0;
+        gameOverModal.style.display = "none";
+        lives = 3;
+        score = 100;
+        zombies = [];
+        gameOver = false;
+        addEventListeners();
+        mainLoop();
+      }
+
+      function mainLoop() {
+        if (gameOver) return;
+
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+        drawLives();
+        drawScore();
+
+        zombies.forEach((zombie, index) => {
+          zombie.update();
+          zombie.draw();
+
+          if (zombie.x + zombieWidth * zombie.scale < 0) {
+            zombies.splice(index, 1);
+            lives--;
+            if (lives <= 0 || score <= 0) {
+              gameOver = true;
+              showGameOverScreen();
+            }
+          }
+        });
+
+        if (Math.random() < 0.02) {
+          spawnZombie();
+        }
+
+        ctx.drawImage(aimImg, aimX - 100, aimY - 100, 200, 200);
+
+        requestAnimationFrame(mainLoop);
+      }
+
+      function showGameOverScreen() {
+        sadMusic.play();
+        finalScore.textContent = score;
+        gameOverModal.style.display = "block";
+        removeEventListeners();
+      }
+
+      restartButton.addEventListener("click", restartGame);
+
+      zombieImg.onload = () => {
+        addEventListeners();
+        mainLoop();
+      };
+    </script>
+  </body>
+</html>

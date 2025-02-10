@@ -1,1 +1,5 @@
-Repozytorium dla WDAI AGH II rok 2024
+A repository with programs written on "Introduction to Web Applications" course
+
+AGH WI
+
+2024/2025
